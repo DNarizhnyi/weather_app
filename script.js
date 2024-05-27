@@ -85,16 +85,17 @@ setInterval(() => {
   date.innerText = getDateTime();
 }, 1000);
 
-// Функція для отримання публічної IP-адреси
+// Функція для отримання публічної IP-адреси з сервісу ipinfo.io
 function getPublicIp() {
-  fetch("https://geolocation-db.com/json/", {
+  fetch("https://ipinfo.io/?token=a3d324767bb04b", {
     method: "GET",
     headers: {},
   })
     .then((response) => response.json())
     .then((data) => {
-      currentCity = data.city;
-      getWeatherData(data.city, currentUnit, hourlyorWeek);
+      const city = data.city;
+      currentCity = city;
+      getWeatherData(city, currentUnit, hourlyorWeek);
     })
     .catch((err) => {
       console.error(err);
@@ -121,8 +122,7 @@ function getWeatherData(city, unit, hourlyorWeek) {
         temp.innerText = celciusToFahrenheit(today.temp);
       }
       currentLocation.innerText = data.resolvedAddress;
-      // condition.innerText = today.conditions;
-      // rain.innerText = "Відсоток - " + today.precip + "%";
+
       uvIndex.innerText = today.uvindex;
       windSpeed.innerText = today.windspeed;
       measureUvIndex(today.uvindex);
@@ -165,9 +165,6 @@ function updateForecast(data, unit, type) {
       dayName = getDayName(data[day].datetime);
     }
     let dayTemp = data[day].temp;
-    // if (unit === "f") {
-    //   dayTemp = celciusToFahrenheit(data[day].temp);
-    // }
     let iconCondition = data[day].icon;
     let iconSrc = getIcon(iconCondition);
     let tempUnit = "°C";
@@ -233,19 +230,6 @@ function getHour(time) {
   
   return `${hour}:${min}`;
 }
-
-// Перетворення часу у формат 12 годин
-// function covertTimeTo12HourFormat(time) {
-//   let hour = time.split(":")[0];
-//   let minute = time.split(":")[1];
-//   let ampm = hour >= 12 ? "pm" : "am";
-//   hour = hour % 12;
-//   hour = hour ? hour : 12; // година '0' повинна бути '12'
-//   hour = hour < 10 ? "0" + hour : hour;
-//   minute = minute < 10 ? "0" + minute : minute;
-//   let strTime = hour + ":" + minute + " " + ampm;
-//   return strTime;
-// }
 
 // Функція для отримання назви дня з дати
 function getDayName(date) {
@@ -336,11 +320,6 @@ searchForm.addEventListener("submit", (e) => {
   }
 });
 
-// // Функція для конвертації градусів за Цельсієм у градуси за Фаренгейтом
-// function celciusToFahrenheit(temp) {
-//   return ((temp * 9) / 5 + 32).toFixed(1);
-// }
-
 var currentFocus;
 search.addEventListener("input", function (e) {
   removeSuggestions();
@@ -383,49 +362,6 @@ search.addEventListener("input", function (e) {
   }
 });
 
-search.addEventListener("keydown", function (e) {
-  var x = document.getElementById("suggestions");
-  if (x) x = x.getElementsByTagName("li");
-  if (e.keyCode == 40) {
-    /*Якщо натиснута клавіша стрілки ВНИЗ, збільшуємо змінну currentFocus:*/
-    currentFocus++;
-    /*і зробити поточний елемент більш видимим:*/
-    addActive(x);
-  } else if (e.keyCode == 38) {
-    /*Якщо натиснута клавіша стрілки ВГОРУ, зменшуємо змінну currentFocus:*/
-    currentFocus--;
-    /*і зробити поточний елемент більш видимим:*/
-    addActive(x);
-  }
-  if (e.keyCode == 13) {
-    /*Якщо натиснута клавіша ENTER, запобігаємо відправці форми,*/
-    e.preventDefault();
-    if (currentFocus > -1) {
-      /*і симулюємо клік на активному елементі:*/
-      if (x) x[currentFocus].click();
-    }
-  }
-});
-
-function addActive(x) {
-  if (!x) return false;
-  removeActive(x);
-  if (currentFocus >= x.length) currentFocus = 0;
-  if (currentFocus < 0) currentFocus = x.length - 1;
-  x[currentFocus].classList.add("active");
-}
-
-function removeActive(x) {
-  for (var i = 0; i < x.length; i++) {
-    x[i].classList.remove("active");
-  }
-}
-
-function removeSuggestions() {
-  var x = document.getElementById("suggestions");
-  if (x) x.parentNode.removeChild(x);
-}
-
 // Встановлення одиниці температури за замовчуванням
 celciusBtn.classList.add("active");
 tempUnit.forEach((unit) => {
@@ -435,10 +371,6 @@ tempUnit.forEach((unit) => {
     if (unit.classList.contains("celcius")) {
       currentUnit = "c";
       getWeatherData(currentCity, currentUnit, hourlyorWeek);}
-    //  else {
-    //   currentUnit = "f";
-    //   getWeatherData(currentCity, currentUnit, hourlyorWeek);
-    // }
   });
 });
 
