@@ -18,7 +18,6 @@ const temp = document.getElementById("temp"),
   searchForm = document.querySelector("#search"),
   search = document.querySelector("#query"),
   celciusBtn = document.querySelector(".celcius"),
-  fahrenheitBtn = document.querySelector(".fahrenheit"),
   tempUnit = document.querySelectorAll(".temp-unit"),
   hourlyBtn = document.querySelector(".hourly"),
   weekBtn = document.querySelector(".week"),
@@ -53,6 +52,7 @@ function loadCities() {
 window.onload = loadCities;
 
 // Функція для отримання дати та часу
+// Функція для отримання дати та часу
 function getDateTime() {
   let now = new Date(),
     hour = now.getHours(),
@@ -67,8 +67,6 @@ function getDateTime() {
     "П'ятниця",
     "Субота",
   ];
-  // Формат 12 годин
-  hour = hour % 12;
   if (hour < 10) {
     hour = "0" + hour;
   }
@@ -168,9 +166,6 @@ function updateForecast(data, unit, type) {
     let iconCondition = data[day].icon;
     let iconSrc = getIcon(iconCondition);
     let tempUnit = "°C";
-    if (unit === "f") {
-      tempUnit = "°F";
-    }
     card.innerHTML = `
                 <h2 class="day-name">${dayName}</h2>
             <div class="card-icon">
